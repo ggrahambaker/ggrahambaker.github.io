@@ -2,13 +2,14 @@
 body {
     margin: 60px auto;
     width: 70%;
-    background-color: #63ccca;
+    background-color: #99ffff;
 }
 nav ul, footer ul {
-    font-family:'Sumana', 'Helvetica', 'Arial', 'Sans-Serif';
+    font-family: 'Arial', 'Sans-Serif';
     padding: 0px;
     list-style: none;
     font-weight: bold;
+    font-style: italic;
 }
 nav ul li, footer ul li {
     display: inline;
@@ -23,7 +24,9 @@ a:hover {
 }
 h1 {
     font-size: 3em;
-    font-family:'Sumana', 'Helvetica', 'Arial', 'Sans-Serif';
+    font-family: 'Arial', 'Sans-Serif';
+    font-weight: bold;
+    font-style: italic;
 }
 p {
     font-size: 1.5em;
