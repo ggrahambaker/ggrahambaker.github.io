@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "big boy idiot time"
-number: "two"
+date: 2014-04-31
 ---
 
 weeeew
