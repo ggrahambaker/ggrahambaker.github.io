@@ -3,6 +3,17 @@ layout: post
 title: "Does Your Kickstarter Suck?"
 date: 2019-05-20
 ---
+#container {
+    height:100px;
+    line-height:100px;
+}
+
+#container img {
+    vertical-align:middle;
+    max-height:100%;
+}
+
+
 # A Study In Blind Ambition
 
 
@@ -20,25 +31,29 @@ The main aspects of a campaign that I thought would determine
 
 The first thing I wanted to look at was the project categories. Which categories were most popular? Which categories had the highest success rate? 
 
+<div id="container">
+	<img src="/../img/cat_count.png" alt="drawing" width="80%"/>
+</div>
 
-<img src="/../img/cat_count.png" alt="drawing" width="80%"/>
 
 This shows the most popular categories across the platform. 
-
-<img src="/../img/cat_plot.png" alt="drawing" width="80%"/>
-
+<div id="container">
+	<img src="/../img/cat_plot.png" alt="drawing" width="80%"/>
+</div>
 In red is the number of successful campaigns, in blue are failed. Film and Video, Music, Games, Comics, Dance, Theater, and Design all have more successul campaigns than not. This is somewhat suprising that the 
 
 This shows a breakdown of categories by success. There are clearly some categories that are more likely to succeed than others. 
 
 
-
-<img src="/../img/launched_at_plot.png" alt="drawing" width="80%"/>
+<div id="container">
+	<img src="/../img/launched_at_plot.png" alt="drawing" width="80%"/>
+</div>
 
 I also wanted to see if there was a paticular month that had more sucessful campaigns. March, April, June, October and November all had more successful than failed campaigns, so timing also might be a significant factor in the success of a paticular project.
 
-<img src="/../img/staff_pick.png" alt="drawing" width="80%"/>
-
+<div id="container">
+	<img src="/../img/staff_pick.png" alt="drawing" width="80%"/>
+</div>
 A final element of interest is the staff pick, which is simply an endorsement from a staff member of Kickstarter. This often leads to more exposure for a paticular product. As you can see, endoresment of a project often leads to a successful campaign. 
 
 
@@ -75,17 +90,27 @@ I will use the AUC score to measure how well my model can identify successful an
 
 
 ### Logistic Regression
-After running the logistic regression out of the box, 
-<img src="/../img/importance_log.png" alt="drawing" width="80%"/>
-<img src="/../img/roc_log_before.png" alt="drawing" width="80%"/>
-<img src="/../img/roc_log_after.png" alt="drawing" width="80%"/>
-
+After running the logistic regression out of the box,
+<div id="container"> 
+	<img src="/../img/importance_log.png" alt="drawing" width="80%"/>
+</div>
+<div id="container">
+	<img src="/../img/roc_log_before.png" alt="drawing" width="80%"/>
+</div>
+<div id="container">
+	<img src="/../img/roc_log_after.png" alt="drawing" width="80%"/>
+</div>
 
 
 ### Random Forest Classifier
 
-<img src="/../img/importance_random_forest.png" alt="drawing" width="80%"/>
-<img src="/../img/roc_rfc_before.png" alt="drawing" width="80%"/>
-<img src="/../img/roc_rfc_after.png" alt="drawing" width="80%"/>
+<div id="container">
+	<img src="/../img/importance_random_forest.png" alt="drawing" width="80%"/>
+</div>
+<div id="container">
+	<img src="/../img/roc_rfc_before.png" alt="drawing" width="80%"/>
+</div>
+<div id="container">
+	<img src="/../img/roc_rfc_after.png" alt="drawing" width="80%"/>
+</div>
 
-![alt text](/../img/hotline.png "hotline")
