@@ -43,32 +43,49 @@ A final element of interest is the staff pick, which is simply an endorsement fr
 
 
 
-With all of these features in mind, we can start using them to start creating models for predicting if a 
+With all of these features in mind, we can start using them to start creating models for predicting if a Kickstarter campaign will be successful or not.
+
+
+
+# Model Fitting
+I will use a variety of different methods to try to create a good model for prediction. 
+
+
+## Numeric Values
+#### Logistic Regression (Logit)
+Logistic Regression is useful because it creates coefficients for each feature, meaning I can see which feature effects the model on the whole more clearly. 
+#### Random Forest
+I will use a random forest classifier as an alternative to Logistic Regression. Perhaps the random forest can expose trends that Logistic regression missed. 
+## Text Values
+#### Bayesian Classifier
+We will use a bayesian classifier to look for common features among descriptions of the campaigns to see if text features indicate the success of a campaign. Bayesian Classifiers are often used for natural language processing problems like this because they are simple and offer good results. 
+
+#### Random Forest
+I will also be using random forest to see if any other patterns emerge from the text values that were not apperent in the bayesian classifier
+
+## Ensemble Method
+I will try to encorperate both types text and numeric values together to find if they work better together. 
 
 
 
 
+# Measuring Success
+I will use the AUC score to measure how well my model can identify successful and failed kickstarter campaigns. Our sample data has about a 50/50 split of successful and failed campaigns, so our baseline AUC score is 0.5. I will look to simply improve on that measurement.
 
 
 
-I have been interested in kickstarters campaigns, I wanted to see what if there was a pattern in what types of projects raise their crowdfunding goal or not, and try to create a model for predicting if your kickstarter will succeed. There was a small amount of data wrangling that needed to be done. Converting data to the correct data type, tossing out or reclassifying stray categories of campaigns, and splitting off active campaigns from the dataset. Ultimately, there are 323749 campaigns that we have in our dataset that we will use to explore what makes a campaign successful. I also have an auxiliary data set that includes information like description, whether or not the offering was “featured” or a “staff pick,”, as well as a direct link for the kickstarter. I can connect both sets of data with a commonly shared offering id. This auxiliary set of data will be useful in later stages of my analysis. 
+### Logistic Regression
+After running the logistic regression out of the box, 
+<img src="/../img/importance_log.png" alt="drawing" width="80%"/>
+<img src="/../img/roc_log_before.png" alt="drawing" width="80%"/>
+<img src="/../img/roc_log_after.png" alt="drawing" width="80%"/>
 
 
 
+### Random Forest Classifier
 
-
--- without me:(  
-4.02 Oakland CA / Octopus Literary Salon  
-4.03 Fullerton CA / Programme Skate Shop  
-4.04 Los Angeles CA / Rec Center  
-4.05 San Diego CA / Terros Gallery  
-4.06 Tucson AZ / Club Congress  
-4.07 Santa Fe NM / Ghost  
-4.08 Oklahoma City OK / House show  
-4.10 St. Louis MO / Pizza Head  
-4.11 Chicago IL / Bohemian Grove  
-4.12 Madison WI / University of Wisconsin  
-4.13 Milwaukee WI / Ground Zero  
-4.17 Minneapolis MN / Moon Palace   
+<img src="/../img/importance_random_forest.png" alt="drawing" width="80%"/>
+<img src="/../img/roc_rfc_before.png" alt="drawing" width="80%"/>
+<img src="/../img/roc_rfc_after.png" alt="drawing" width="80%"/>
 
 ![alt text](/../img/hotline.png "hotline")
