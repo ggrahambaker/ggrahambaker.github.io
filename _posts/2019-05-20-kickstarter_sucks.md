@@ -1,13 +1,36 @@
 ---
 layout: post
 title: "Does Your Kickstarter Suck?"
-date: 2019-03-01
+date: 2019-05-20
 ---
 # A Study In Blind Ambition
 
 
 Recently, some Kickstarter campaigns have been brought to my attention via the [Your Kickstarter Sucks Podcast](https://soundcloud.com/ykspod). I have been blown away by the sheer volume of bizarre and unnessary kickstarter campaigns that people sink valuable time and money into developing. Some of my favorites include [the Smart Spinner : The Most Unique and Versatile Fidget Spinner](https://www.kickstarter.com/projects/270360067/smart-spinner-the-most-unique-and-versatile-fidget?ref=discovery), [The Guac-e Talk-e](https://www.kickstarter.com/projects/638032122/the-guac-e-talk-e), and the classic [Mokase](https://www.kickstarter.com/projects/mokase/mokase-your-mobile-phone-cover-makes-even-coffee). I am setting out to analyze several features of Kickstarter campaigns, and create a prediction model to determine if the campaign will be a success or not. I hope to offer a way for kickstarter campaign managers to see if their idea is worth launching on the platform.
 
+
+# Data Wrangling and Cleaning
+
+I got my data from [webrobots.io](https://webrobots.io/kickstarter-datasets/) who have been scraping Kickstarter data since 2015. The data set was almost 50 gb of csv files, making analysis on the entire set unmanagable, so I selected a smaller set to make generalizations on the set as a whole. I also just included projects from the United States, to ensure that I can create a viable model without the confusion of comparing projects from different countries. 
+
+
+# Data Exploration
+
+The first thing I wanted to look at was the project categories. Which categories were most popular? Which categories had the highest success rate? 
+
+
+![alt text](/../img/cat_counts.png "cat_counts")
+
+This shows the most popular categories across the platform. 
+
+![alt text](/../img/cat_plot.png "cat_ratio")
+
+This shows a breakdown of categories by success. There are clearly some categories that are more likely to succeed than others. 
+
+
+
+
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
 
 
 
