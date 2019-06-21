@@ -9,7 +9,7 @@ date: 2019-05-20
 # A Study Of Kickstart Campaign Data
 
 
-Recently, some Kickstarter campaigns have been brought to my attention via the [Your Kickstarter Sucks Podcast](https://soundcloud.com/ykspod). I have been blown away by the sheer volume of bizarre and unnessisary kickstarter campaigns that people sink valuable time and money into developing. Some of my favorites include [the Smart Spinner : The Most Unique and Versatile Fidget Spinner](https://www.kickstarter.com/projects/270360067/smart-spinner-the-most-unique-and-versatile-fidget?ref=discovery), [The Guac-e Talk-e](https://www.kickstarter.com/projects/638032122/the-guac-e-talk-e), and the classic [Mokase](https://www.kickstarter.com/projects/mokase/mokase-your-mobile-phone-cover-makes-even-coffee). I am setting out to analyze several features of Kickstarter campaigns, and create a prediction model to determine if the campaign will be a success or not. I hope to offer a way for kickstarter campaign managers to see if their idea is worth launching on the platform.
+Recently, some Kickstarter campaigns have been brought to my attention via the [Your Kickstarter Sucks Podcast](https://soundcloud.com/ykspod). I have been blown away by the sheer volume of bizarre and unnecessary kickstarter campaigns that people sink valuable time and money into developing. Some of my favorites include [the Smart Spinner : The Most Unique and Versatile Fidget Spinner](https://www.kickstarter.com/projects/270360067/smart-spinner-the-most-unique-and-versatile-fidget?ref=discovery), [The Guac-e Talk-e](https://www.kickstarter.com/projects/638032122/the-guac-e-talk-e), and the classic [Mokase](https://www.kickstarter.com/projects/mokase/mokase-your-mobile-phone-cover-makes-even-coffee). I am setting out to analyze several features of Kickstarter campaigns, and create a prediction model to determine if the campaign will be a success or not. I hope to offer a way for kickstarter campaign managers to see if their idea is worth launching on the platform.
 
 
 # Data Wrangling and Cleaning
@@ -104,7 +104,7 @@ I also was interested in the importance of the fields in the classification mode
 	<img src="/../img/roc_log_after.png" alt="drawing" width="80%"/>
 </div>
 
-I used a Grid Search to search for C, a parameter that helps regularize the fit of the regression. After tuning, the AUC score was brought up to .70, which is a pretty good increase from the null AUC. I thought I would try to use a different classifier to get a more accurate model.
+I used a Grid Search to search for C, a parameter that helps regularize the fit of the regression. After tuning, the AUC score was brought up to .70, which is a pretty good increase from the null AUC.  However the accuracy is only 63.16 percent, so I will try to use a different classifier to get a more accurate model.
 
 
 ## Random Forest Classifier
@@ -116,7 +116,7 @@ The random forest classifier has the ability to find harder to find patterns in 
 </div>
 
 
-Out of the box, the AUC of the random forest is higher than the Logistic Regression classifier. However, this model had some overfitting problems. Meaning it was too good at classifying the training data set, but couldn't make generalizations about the test data set it had never seen. I need to tune the parameters to make a better fitting classifier. 
+Out of the box, the AUC of the random forest is higher than the Logistic Regression classifier. However, this model had some overfitting problems. The accuracy on the training data is 89.57 percent while the accuracy on the test data is 70.98. Meaning it was too good at classifying the training data set, but had a difficult time making generalizations about the test data set it had never seen. I need to tune the parameters to make a better fitting classifier. 
 
 
 <div id="container">
@@ -128,7 +128,7 @@ Using the RFE classifier again, I wanted to see the most important fields in the
 	<img src="/../img/roc_rfc_after.png" alt="drawing" width="80%"/>
 </div>
 
-After tuning parameters like max depth and number of trees generated, I had greatly reduced overfitting and got an AUC score of .83. This is a pretty good improvement from where we started.
+After tuning parameters like max depth and number of trees generated, I had greatly reduced overfitting while improving accuracy to 74.08 percent and got an AUC score of .83. This is a pretty good improvement from where we started.
 
 
 # Natural Language Processing
@@ -151,12 +151,7 @@ Out of the box, our classifier performs decently. It is overfitting the training
 </div>
 
 
-
-
-
 After tuning, the classifier is not overfitting at all, which is great! However our AUC is still not that great. At only .73, maybe we should try a different classifier to get better results. 
-
-
 
 <div id="container">
 	<img src="/../img/roc_bayes_after.png" alt="drawing" width="80%"/>
