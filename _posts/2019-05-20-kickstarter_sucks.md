@@ -16,21 +16,29 @@ I got my data from [webrobots.io](https://webrobots.io/kickstarter-datasets/) wh
 
 # Data Exploration
 
+The main aspects of a campaign that I thought would determine 
+
 The first thing I wanted to look at was the project categories. Which categories were most popular? Which categories had the highest success rate? 
 
 
-<img src="/../img/cat_count.png" alt="drawing" width="200"/>
+<img src="/../img/cat_count.png" alt="drawing" width="80%"/>
 
 This shows the most popular categories across the platform. 
 
-<img src="/../img/cat_plot.png" alt="drawing" width="200"/>
+<img src="/../img/cat_plot.png" alt="drawing" width="80%"/>
+
+In red is the number of successful campaigns, in blue are failed. Film and Video, Music, Games, Comics, Dance, Theater, and Design all have more successul campaigns than not. This is somewhat suprising that the 
 
 This shows a breakdown of categories by success. There are clearly some categories that are more likely to succeed than others. 
 
 
 
+<img src="/../img/launched_at_plot.png" alt="drawing" width="80%"/>
 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
+<img src="/../img/staff_pick.png" alt="drawing" width="80%"/>
+
+
 
 
 
