@@ -35,10 +35,15 @@ This shows a breakdown of categories by success. There are clearly some categori
 
 <img src="/../img/launched_at_plot.png" alt="drawing" width="80%"/>
 
+I also wanted to see if there was a paticular month that had more sucessful campaigns. March, April, June, October and November all had more successful than failed campaigns, so timing also might be a significant factor in the success of a paticular project.
 
 <img src="/../img/staff_pick.png" alt="drawing" width="80%"/>
 
+A final element of interest is the staff pick, which is simply an endorsement from a staff member of Kickstarter. This often leads to more exposure for a paticular product. As you can see, endoresment of a project often leads to a successful campaign. 
 
+
+
+With all of these features in mind, we can start using them to start creating models for predicting if a 
 
 
 
