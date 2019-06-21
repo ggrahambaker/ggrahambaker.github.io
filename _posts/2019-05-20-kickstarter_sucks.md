@@ -19,11 +19,11 @@ I got my data from [webrobots.io](https://webrobots.io/kickstarter-datasets/) wh
 The first thing I wanted to look at was the project categories. Which categories were most popular? Which categories had the highest success rate? 
 
 
-![alt text](/../img/cat_counts.png "cat_counts")
+<img src="/../img/cat_count.png" alt="drawing" width="200"/>
 
 This shows the most popular categories across the platform. 
 
-![alt text](/../img/cat_plot.png "cat_ratio")
+<img src="/../img/cat_plot.png" alt="drawing" width="200"/>
 
 This shows a breakdown of categories by success. There are clearly some categories that are more likely to succeed than others. 
 
