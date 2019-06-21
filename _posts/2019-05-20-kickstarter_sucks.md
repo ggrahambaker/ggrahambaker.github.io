@@ -3,16 +3,7 @@ layout: post
 title: "Does Your Kickstarter Suck?"
 date: 2019-05-20
 ---
-<style>
-#container {
-    height:100px;
-    line-height:100px;
-}
 
-#container img {
-    vertical-align:middle;
-}
-</style>
 
 # A Study In Blind Ambition
 
