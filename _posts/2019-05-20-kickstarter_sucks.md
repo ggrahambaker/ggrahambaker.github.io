@@ -5,7 +5,7 @@ date: 2019-05-20
 ---
 
 
-# A Study In Blind Ambition
+# A Study Of Kickstart Campaign Data
 
 
 Recently, some Kickstarter campaigns have been brought to my attention via the [Your Kickstarter Sucks Podcast](https://soundcloud.com/ykspod). I have been blown away by the sheer volume of bizarre and unnessary kickstarter campaigns that people sink valuable time and money into developing. Some of my favorites include [the Smart Spinner : The Most Unique and Versatile Fidget Spinner](https://www.kickstarter.com/projects/270360067/smart-spinner-the-most-unique-and-versatile-fidget?ref=discovery), [The Guac-e Talk-e](https://www.kickstarter.com/projects/638032122/the-guac-e-talk-e), and the classic [Mokase](https://www.kickstarter.com/projects/mokase/mokase-your-mobile-phone-cover-makes-even-coffee). I am setting out to analyze several features of Kickstarter campaigns, and create a prediction model to determine if the campaign will be a success or not. I hope to offer a way for kickstarter campaign managers to see if their idea is worth launching on the platform.
@@ -17,8 +17,6 @@ I got my data from [webrobots.io](https://webrobots.io/kickstarter-datasets/) wh
 
 
 # Data Exploration
-
-The main aspects of a campaign that I thought would determine 
 
 The first thing I wanted to look at was the project categories. Which categories were most popular? Which categories had the highest success rate? 
 
