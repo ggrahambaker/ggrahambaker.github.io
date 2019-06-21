@@ -11,7 +11,6 @@ date: 2019-05-20
 
 #container img {
     vertical-align:middle;
-    max-height:100%;
 }
 </style>
 
