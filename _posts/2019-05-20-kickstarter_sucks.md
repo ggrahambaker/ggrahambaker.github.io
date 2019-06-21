@@ -1,4 +1,3 @@
-Regression
 ---
 layout: post
 title: "Does Your Kickstarter Suck?"
