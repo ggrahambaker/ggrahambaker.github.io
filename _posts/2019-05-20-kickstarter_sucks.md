@@ -180,11 +180,30 @@ Using the same vectorized words, got a decent AUC score, but we got significant 
 <div id="container">
 	<img src="/../img/roc_word_forest_before.png" alt="drawing" width="80%"/>
 </div>
+Accuracy on training data: 0.673026
+Accuracy on test data:     0.641368
 
+After finding the best paramters, our accuracy for test and train came a lot closer to each other, and slightly increased our test data accuracy to 64.13 percent. This is only 15 percent better than randomly choosing, so I think I will stick with the Naive Bayes classifier for the descriptions. 
 
 <div id="container">
 	<img src="/../img/roc_word_forest_after.png" alt="drawing" width="80%"/>
 </div>
+
+
+
+# Voting Classifier
+
+Since I want to use both the numeric and text data to try to predict if a Kickstarter campaign will be successful or not, I will use a voting classifier to blend the two methods together. 'Soft' voting means that the average prediction between the two models will be counted as the prediction for the entire classifier. 
+
+
+<div id="container">
+	<img src="/../img/roc_vote.png" alt="drawing" width="80%"/>
+</div>
+
+
+# Conclusion
+
+Through creating these classifiers, we have achieved a combined score of .81. This is a pretty significant improvement from where we started, but generally still not super accurate. Since the features I was working with have no intrinsic measure about how good a paticular project will do in fundraising, the model had to generalize pretty significantly about the attributes. For a larger improvement, more features would be needed to make a better estimate. 
 
 
 
