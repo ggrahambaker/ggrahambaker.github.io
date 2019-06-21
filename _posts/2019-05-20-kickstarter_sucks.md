@@ -171,8 +171,7 @@ Using the same vectorized words, got a decent AUC score, but we got significant 
 <div id="container">
 	<img src="/../img/roc_word_forest_before.png" alt="drawing" width="80%"/>
 </div>
-Accuracy on training data: 0.673026
-Accuracy on test data:     0.641368
+
 
 After finding the best parameters, our accuracy for test and train came a lot closer to each other, and slightly increased our test data accuracy to 64.13 percent. This is only 15 percent better than randomly choosing, so I think I will stick with the Naive Bayes classifier for the descriptions. 
 
