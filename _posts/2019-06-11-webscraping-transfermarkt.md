@@ -5,9 +5,6 @@ date: 2019-06-11
 ---
 
 
-# Webscraping Transfermarkt
-
-
 I was working on a project that predicted the success of Premier League teams depending on a number of variables. I figured that transfer statistics would be a good indication of success in the league. Buying expensive players indicates that you are buying good players, which will help a team win more points. In order to get this information, I wanted to scrape [transfermarket](https://www.transfermarkt.co.uk/) for this information. 
 
 
