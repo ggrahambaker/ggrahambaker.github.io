@@ -8,192 +8,187 @@ date: 2019-06-11
 # Webscraping Transfermarkt
 
 
-Recently, some Kickstarter campaigns have been brought to my attention via the [Your Kickstarter Sucks Podcast](https://soundcloud.com/ykspod). I have been blown away by the sheer volume of bizarre and unnecessary kickstarter campaigns that people sink valuable time and money into developing. Some of my favorites include [the Smart Spinner : The Most Unique and Versatile Fidget Spinner](https://www.kickstarter.com/projects/270360067/smart-spinner-the-most-unique-and-versatile-fidget?ref=discovery), [The Guac-e Talk-e](https://www.kickstarter.com/projects/638032122/the-guac-e-talk-e), and the classic [Mokase](https://www.kickstarter.com/projects/mokase/mokase-your-mobile-phone-cover-makes-even-coffee). I am setting out to analyze several features of Kickstarter campaigns, and create a prediction model to determine if the campaign will be a success or not. I hope to offer a way for kickstarter campaign managers to see if their idea is worth launching on the platform.
+I was working on a project that predicted the success of Premier League teams depending on a number of variables. I figured that transfer statistics would be a good indication of success in the league. Buying expensive players indicates that you are buying good players, which will help a team win more points. In order to get this information, I wanted to scrape [transfermarket](https://www.transfermarkt.co.uk/) for this information. 
+
+
+
+## Setting Up Environment
+
+I used [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/), a python based webscraping package to crawl through the pages of transfermarkt. I was using a Jupyter notebook because I wanted to convert the dataset into a human readable csv file once I was finished. 
+
+
+
+## Starting
+```python
+import pandas as pd
+from bs4 import BeautifulSoup
+import requests
+```
+These were the main packages I used during this exercise. 
+
+My starting point for the webscraping was going to be the [2018 season homepage](https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=2018) where I could get most of the transfer information. I also had to fool transfermarkt into allowing my access by passing in header information that I was coming from a web browser. 
+
+```python
+headers = {'User-Agent': 
+           'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'}
+
+page = 'https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=2018'
+
+tree = requests.get(page, headers = headers)
+#print(tree)
+soup = BeautifulSoup(tree.content, 'html.parser')
+```
+
+
+
+## Pulling in Data by Season
+
+Now that I had a beautiful soup object that contained all of the html from the yearly homepage, I need to search for the table containing the information I needed. I wanted to just get the url for each team, so I would be able to use for future queries. 
+
+```python
+def build_by_year(year):
+    page = 'https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=' + year
+    tree = requests.get(page, headers = headers)
+    soup = BeautifulSoup(tree.content, 'html.parser')
+    spending_table = soup.select("tbody")[1]
+    names = soup.select("td.hide-for-pad > a.vereinprofil_tooltip")
+    season = []
+    for name in names:
+        temp = []
+        temp_name = name.text.rstrip('FC').lower().rstrip()
+        temp.append(temp_name)
+        temp.append(name.get('href'))
+        season.append(temp)
+    return season
+```
+This function took a year, and used to to look up the teams in the particular season. I was able to find the name of the team as well as the link for a teams home page. 
+
+
+With that link, I could query specific teams transfer history. 
+
+
+```python
+def get_all_transfer_info_year(url, year):
+    date_dict = {
+    '18/19': '2018',
+    '17/18': '2017',
+    '16/17': '2016',
+    '15/16': '2015',
+    '14/15': '2014',
+    '13/14': '2013',
+    '12/13': '2012',
+    '11/12': '2011',
+    '10/11': '2010',
+    '09/10': '2009',
+    '08/09': '2008',
+    '07/08': '2007',
+    '06/07': '2006',
+    '05/06': '2005',
+    '04/05': '2004'}
+    year_to_ret = ''
+    for dash, whole in date_dict.items():
+        if year == whole:
+            year_to_ret = dash
+    fixed_url = url.replace("startseite", "alletransfers")[1:]
+    full_url = 'https://www.transfermarkt.co.uk/' + fixed_url 
+    tree = requests.get(full_url, headers = headers)
+    s = BeautifulSoup(tree.content, 'html.parser')
+    incoming = s.select("td.redtext")
+    in_and_out = []
+    for idx, spent in enumerate(incoming):
+        for parent in incoming[idx].parents:
+            if parent.get('class') == ['box']:
+                split = parent.text.split()
+                if split[0] == 'Arrivals' and split[1] == year_to_ret:
+                    in_and_out = [spent.text, '']
+                    break
+            
+        # if we got here, we didnt find it!
+    if not bool(in_and_out):
+        in_and_out = ['0', '']
+    outgoing = s.select("td.greentext")    
+    for idx, sale in enumerate(outgoing):
+        for parent in outgoing[idx].parents:
+            if parent.get('class') == ['box']:
+                split = parent.text.split()
+                if split[0] == 'Departures' and split[1] == year_to_ret:
+                    in_and_out[1] = sale.text
+    
+    if in_and_out[1] == '':
+        in_and_out[1] =  '0'
+    return in_and_out
+```
+
+This function went though all the years of a particular clubs transfer history, and got how much the team spent and sold per year. I had to replace some of the url to get the appropriate location of the transfer information. One difficulty pulling this information in was that if a team sold or spent nothing, the information was the opposite color that you would expect. So i needed to just go year by year, asking for the specific year in the table, and getting both spent and sold values. This approach takes significantly more time than just getting all the teams transfer history in one url request, but since the data set was only for about 15 years, this wasn’t very expensive in my case. Once I had this information, I wanted to combine it with the point table at the end of the season. 
+
+
+
+# Combining Tables
+
+I had gotten the season tables for each year from a different source, so unfortunately, the team names were slightly different from one another. For example, I could have Brighton and Hove Albion, Brighton & Hove Albion, or simply Brighton. This made matching team names together impossible just using string equality. I turned to a python package called [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy). This package takes two string together and gives a similarity score out of 100. Since I knew all the possible names, I created a list of names I wanted to use for each club and matched them against the incompatible team names from Transfermarkt and my season tables.
+
+
+``` python
+def team_lookup(name):
+    team_list = [
+        'bournemouth',
+        'arsenal', 
+        'aston villa', 
+        'birmingham city', 
+        'blackburn rovers',
+        'blackpool',
+        'bolton wanderers', 
+        'brighton hove albion', 
+        'burnley', 
+        'cardiff city', 
+        'charlton athletic', 
+        'chelsea', 
+        'crystal palace', 
+        'derby county', 
+        'everton', 
+        'fulham', 
+        'huddersfield town',
+        'hull city',
+        'leicester city', 
+        'liverpool', 
+        'manchester city', 
+        'manchester united', 
+        'middlesbrough', 
+        'newcastle united', 
+        'norwich city', 
+        'portsmouth', 
+        'queens park rangers', 
+        'reading', 
+        'sheffield united', 
+        'southampton', 
+        'stoke city', 
+        'sunderland',
+        'swansea city',
+        'tottenham hotspur', 
+        'watford', 
+        'west bromwich albion', 
+        'west ham united', 
+        'wigan athletic', 
+        'wolverhampton wanderers'
+    ]
+    max_score = 0
+    name_to_ret = ''
+    for team in team_list:
+        temp_score = fuzz.ratio(name, team)
+        if temp_score > max_score:
+            max_score = temp_score
+            name_to_ret = team
+        
+    return name_to_ret
+```
+
+
+Using this function, I was able to combine all of the relevant data together into one pandas dataframe object. You can find the full table of data that I put together [here](https://www.kaggle.com/grahamcrbaker/premier-league-player-values). Let me know what you think!
 
 
-# Data Wrangling and Cleaning
 
-I got my data from [webrobots.io](https://webrobots.io/kickstarter-datasets/) who have been scraping Kickstarter data since 2015. The data set was almost 50 gb of csv files, making analysis on the entire set unmanageable, so I selected a smaller set to make generalizations on the set as a whole. I also just included projects from the United States, to ensure that I can create a viable model without the confusion of comparing projects from different countries. 
 
 
-# Data Exploration
-
-The first thing I wanted to look at was the project categories. Which categories were most popular? Which categories had the highest success rate? 
-
-<div id="container">
-	<img src="/../img/cat_count.png" alt="drawing" width="80%"/>
-</div>
-
-
-This shows the most popular categories across the platform. 
-<div id="container">
-	<img src="/../img/cat_plot.png" alt="drawing" width="80%"/>
-</div>
-In red is the number of successful campaigns, in blue are failed. Film and Video, Music, Games, Comics, Dance, Theater, and Design all have more successful campaigns than not. This is somewhat surprising that the 
-
-This shows a breakdown of categories by success. There are clearly some categories that are more likely to succeed than others. 
-
-
-<div id="container">
-	<img src="/../img/launched_at_plot.png" alt="drawing" width="80%"/>
-</div>
-
-I also wanted to see if there was a particular month that had more successful campaigns. March, April, June, October and November all had more successful than failed campaigns, so timing also might be a significant factor in the success of a particular project.
-
-<div id="container">
-	<img src="/../img/staff_pick.png" alt="drawing" width="80%"/>
-</div>
-A final element of interest is the staff pick, which is simply an endorsement from a staff member of Kickstarter. This often leads to more exposure for a particular product. As you can see, endorsement of a project often leads to a successful campaign. 
-
-
-
-With all of these features in mind, we can start using them to start creating models for predicting if a Kickstarter campaign will be successful or not.
-
-
-
-# Model Fitting
-I will use a variety of different methods to try to create a good model for prediction. 
-
-
-# Numeric Values
-### Logistic Regression (Logit)
-Logistic Regression is useful because it creates coefficients for each feature, meaning I can see which feature effects the model on the whole more clearly. 
-### Random Forest
-I will use a random forest classifier as an alternative to Logistic Regression. Perhaps the random forest can expose trends that Logistic regression missed. 
-# Text Values
-### Bayesian Classifier
-We will use a bayesian classifier to look for common features among descriptions of the campaigns to see if text features indicate the success of a campaign. Bayesian Classifiers are often used for natural language processing problems like this because they are simple and offer good results. 
-
-### Random Forest
-I will also be using random forest to see if any other patterns emerge from the text values that were not apparent in the bayesian classifier
-
-# Ensemble Method
-I will try to incorporate both types text and numeric values together to find if they work better together. 
-
-
-
-
-# Measuring Success
-I will use the AUC score to measure how well my model can identify successful and failed kickstarter campaigns. Our sample data has about a 50/50 split of successful and failed campaigns, so our baseline AUC score is 0.5. I will look to simply improve on that measurement.
-
-
-
-### Logistic Regression
-
-<div id="container">
-	<img src="/../img/roc_log_before.png" alt="drawing" width="80%"/>
-</div>
-
-
-After running the logistic regression out of the box, I got an AUC score of .61. Since this score is only .10 above the null value we are looking for, we will tune our parameters to fit the logistic classifier better. 
-
-
-
-
-<div id="container"> 
-	<img src="/../img/importance_log.png" alt="drawing" width="80%"/>
-</div>
-
-
-I also was interested in the importance of the fields in the classification model. Using a RFE classifier allowed me to expose the most influential fields. 
-
-
-## Tuning Parameters
-<div id="container">
-	<img src="/../img/roc_log_after.png" alt="drawing" width="80%"/>
-</div>
-
-I used a Grid Search to search for C, a parameter that helps regularize the fit of the regression. After tuning, the AUC score was brought up to .70, which is a pretty good increase from the null AUC.  However the accuracy is only 63.16 percent, so I will try to use a different classifier to get a more accurate model.
-
-
-## Random Forest Classifier
-The random forest classifier has the ability to find harder to find patterns in our data through its randomness. 
-
-
-<div id="container">
-	<img src="/../img/roc_rfc_before.png" alt="drawing" width="80%"/>
-</div>
-
-
-Out of the box, the AUC of the random forest is higher than the Logistic Regression classifier. However, this model had some overfitting problems. The accuracy on the training data is 89.57 percent while the accuracy on the test data is 70.98. Meaning it was too good at classifying the training data set, but had a difficult time making generalizations about the test data set it had never seen. I need to tune the parameters to make a better fitting classifier. 
-
-
-<div id="container">
-	<img src="/../img/importance_random_forest.png" alt="drawing" width="80%"/>
-</div>
-
-Using the RFE classifier again, I wanted to see the most important fields in the random forest classifier. The most important fields were the exact opposite of the logistic classifier. This makes sense because the random forest randomly decides which field to make decisions on, making the most important fields pretty much random. 
-<div id="container">
-	<img src="/../img/roc_rfc_after.png" alt="drawing" width="80%"/>
-</div>
-
-After tuning parameters like max depth and number of trees generated, I had greatly reduced overfitting while improving accuracy to 74.08 percent and got an AUC score of .83. This is a pretty good improvement from where we started.
-
-
-# Natural Language Processing
-
-I will be using the description of the kickstarter project to see if there is useful attributes in predicting success of a campaign. I will use a CountVectorizer, to create a way for classifiers to interpret the text data.
-
-
-## Count Vectorizer
-I will use a count vectorizer to convert the descriptions of the projects into a sparse matrix for me to conduct analysis on. I will be using a "bag of words" technique where I don’t care about order of words, just frequency and relationship to descriptions of other projects. I will have to do a little bit on tuning on the Count Vectorizer to get the most accurate results I can. 
-The Count Vectorizer creates a dictionary underneath the sparse matrix that keeps track of the words that are in all the descriptions. Keeping only words that appear a certain amount of descriptions decreases noise in analysis. Also grouping words together in pairs as one dictionary entry helps identify important phrases, adding a little more sophistication to our "bag of words" technique. 
-
-
-
-## Naive Bayes
-This classifier is often paired with natural language processing and provides accurate results for this type of classification problem. 
-
-Out of the box, our classifier performs decently. It is overfitting the training data more than I would like, so I make it better through parameter tuning for both the Count Vectorizer and the Bayes classifier.
-<div id="container">
-	<img src="/../img/roc_bayes_before.png" alt="drawing" width="80%"/>
-</div>
-
-
-After tuning, the classifier is not overfitting at all, which is great! However our AUC is still not that great. At only .73, maybe we should try a different classifier to get better results. 
-
-<div id="container">
-	<img src="/../img/roc_bayes_after.png" alt="drawing" width="80%"/>
-</div>
-
-We also were able to pull out the words that implied the most successful campaigns as well as the ones that implied a failed campaign. 
-
-<div id="container">
-	<img src="/../img/good_bad_words.png" alt="drawing" width="80%"/>
-</div>
-
-# Random Forest
-
-We will use random forest again to see if it yields more success! 
-
-
-Using the same vectorized words, got a decent AUC score, but we got significant overfitting. The accuracy on the training data was 98.21 percent, and test data was only 63.75 percent. We need to tune our parameters!
-<div id="container">
-	<img src="/../img/roc_word_forest_before.png" alt="drawing" width="80%"/>
-</div>
-
-
-After finding the best parameters, our accuracy for test and train came a lot closer to each other, and slightly increased our test data accuracy to 64.13 percent. This is only 15 percent better than randomly choosing, so I think I will stick with the Naive Bayes classifier for the descriptions. 
-
-<div id="container">
-	<img src="/../img/roc_word_forest_after.png" alt="drawing" width="80%"/>
-</div>
-
-
-
-# Voting Classifier
-
-Since I want to use both the numeric and text data to try to predict if a Kickstarter campaign will be successful or not, I will use a voting classifier to blend the two methods together. 'Soft' voting means that the average prediction between the two models will be counted as the prediction for the entire classifier. 
-
-
-<div id="container">
-	<img src="/../img/roc_vote.png" alt="drawing" width="80%"/>
-</div>
-
-
-# Conclusion
-
-Through creating these classifiers, we have achieved a combined score of .81. This is a pretty significant improvement from where we started, but generally still not super accurate. Since the features I was working with have no intrinsic measure about how good a particular project will do in fundraising, the model had to generalize pretty significantly about the attributes. For a larger improvement, more features would be needed to make a better estimate. 
 
 
 
