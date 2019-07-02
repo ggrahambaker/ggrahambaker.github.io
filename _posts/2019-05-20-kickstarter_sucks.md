@@ -74,7 +74,10 @@ I will try to incorporate both types text and numeric values together to find if
 
 
 # Measuring Success
-I will use the AUC score to measure how well my model can identify successful and failed kickstarter campaigns. Our sample data has about a 50/50 split of successful and failed campaigns, so our baseline AUC score is 0.5. I will look to simply improve on that measurement.
+I will use the AUROC or AUC for short, score to measure how well my model can identify successful and failed kickstarter campaigns. This is a way to measure true positive rates (successful campaign), against false positive rates (identifying a failed campaign as successful) The closer the AUC is to 1, the better it is. For more information on AUC curves, check [here] (https://en.wikipedia.org/wiki/Receiver_operating_characteristic)
+
+Our sample data has about a 50/50 split of successful and failed campaigns, so our baseline AUC score is 0.5. I will look to simply improve on that measurement.
+
 
 
 
