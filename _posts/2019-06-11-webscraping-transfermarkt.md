@@ -5,13 +5,13 @@ date: 2019-06-11
 ---
 
 
-I was working on a project that predicted the success of Premier League teams depending on a number of variables. I figured that transfer statistics would be a good indication of success in the league. Buying expensive players indicates that you are buying good players, which will help a team win more points. In order to get this information, I wanted to scrape [transfermarket](https://www.transfermarkt.co.uk/) for this information. 
+I was working on a project that predicted the success of Premier League teams depending on several variables. I figured that transfer statistics would be a good indication of success in the league. Buying expensive players indicates that you are buying good players, which will help a team win more points. To get this information, I wanted to scrape [transfermarket](https://www.transfermarkt.co.uk/) for this information. 
 
 
 
 ## Setting Up Environment
 
-I used [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/), a python based webscraping package to crawl through the pages of transfermarkt. I was using a Jupyter notebook because I wanted to convert the dataset into a human readable csv file once I was finished. 
+I used [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/), a python based web scraping package to crawl through the pages of transfermarkt. I was using a Jupyter notebook because I wanted to convert the dataset into a human-readable csv file once I was finished. 
 
 
 
@@ -23,7 +23,7 @@ import requests
 ```
 These were the main packages I used during this exercise. 
 
-My starting point for the webscraping was going to be the [2018 season homepage](https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=2018) where I could get most of the transfer information. I also had to fool transfermarkt into allowing my access by passing in header information that I was coming from a web browser. 
+My starting point for the web scraping was going to be the [2018 season homepage](https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=2018) where I could get most of the transfer information. I also had to fool transfermarkt into allowing my access by passing in header information that I was coming from a web browser. 
 
 ```python
 headers = {'User-Agent': 
@@ -40,7 +40,7 @@ soup = BeautifulSoup(tree.content, 'html.parser')
 
 ## Pulling in Data by Season
 
-Now that I had a beautiful soup object that contained all of the html from the yearly homepage, I need to search for the table containing the information I needed. I wanted to just get the url for each team, so I would be able to use for future queries. 
+Now that I had a beautiful soup object that contained all of the html from the yearly homepage, I need to search for the table containing the information I needed. I wanted to just get the url for each team, so I would be able to use it for future queries. 
 
 ```python
 def build_by_year(year):
@@ -61,7 +61,7 @@ def build_by_year(year):
 This function took a year, and used to to look up the teams in the particular season. I was able to find the name of the team as well as the link for a teams home page. 
 
 
-With that link, I could query specific teams transfer history. 
+With that link, I could query-specific teams transfer history. 
 
 
 ```python
@@ -116,13 +116,13 @@ def get_all_transfer_info_year(url, year):
     return in_and_out
 ```
 
-This function went though all the years of a particular clubs transfer history, and got how much the team spent and sold per year. I had to replace some of the url to get the appropriate location of the transfer information. One difficulty pulling this information in was that if a team sold or spent nothing, the information was the opposite color that you would expect. So i needed to just go year by year, asking for the specific year in the table, and getting both spent and sold values. This approach takes significantly more time than just getting all the teams transfer history in one url request, but since the data set was only for about 15 years, this wasn’t very expensive in my case. Once I had this information, I wanted to combine it with the point table at the end of the season. 
+This function went through all the years of a particular clubs transfer history and got how much the team spent and sold per year. I had to replace some of the url to get the appropriate location of the transfer information. One difficulty pulling this information in was that if a team sold or spent nothing, the information was the opposite color that you would expect. So I needed to just go year by year, asking for the specific year in the table, and getting both spent and sold values. This approach takes significantly more time than just getting all the team's transfer history in one url request, but since the data set was only for about 15 years, this wasn’t very expensive in my case. Once I had this information, I wanted to combine it with the point table at the end of the season. 
 
 
 
 # Combining Tables
 
-I had gotten the season tables for each year from a different source, so unfortunately, the team names were slightly different from one another. For example, I could have Brighton and Hove Albion, Brighton & Hove Albion, or simply Brighton. This made matching team names together impossible just using string equality. I turned to a python package called [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy). This package takes two string together and gives a similarity score out of 100. Since I knew all the possible names, I created a list of names I wanted to use for each club and matched them against the incompatible team names from Transfermarkt and my season tables.
+I had gotten the season tables for each year from a different source, so, unfortunately, the team names were slightly different from one another. For example, I could have Brighton and Hove Albion, Brighton & Hove Albion, or simply Brighton. This made matching team names together impossible just using string equality. I turned to a python package called [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy). This package takes two string together and gives a similarity score out of 100. Since I knew all the possible names, I created a list of names I wanted to use for each club and matched them against the incompatible team names from Transfermarkt and my season tables.
 
 
 ``` python

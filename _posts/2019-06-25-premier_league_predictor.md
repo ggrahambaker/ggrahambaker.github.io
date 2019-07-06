@@ -4,28 +4,28 @@ title: "Premier League Predictor"
 date: 2019-06-25
 ---
 
-As a fan of Liverpool Football Club, a Premier League football team that narrowly came in second place in the 2018-19 season, I wanted to see there was a way to predict how many points a team would earn over the course of a season. I will be looking at squad worth, average attendance of home game, manager history, performance over the course of the last season, as well as other important attributes of a team. Using this information, I hope to get accurate predictions for how well a team will do in a premier league season.
+As a fan of Liverpool Football Club, a Premier League football team that narrowly came in second place in the 2018-19 season, I wanted to see there was a way to predict how many points a team would earn throughout a season. I will be looking at squad worth, average attendance of home game, manager history, performance throughout the last season, as well as other important attributes of a team. Using this information, I hope to get accurate predictions for how well a team will do in a premier league season.
 
 
 ### Collecting Data
-This data was wildly available online for me to use, however, it was difficult to find any in csv, api or more manageable form. I had to scrape the information from transfermarkt.com in order to get get what I needed. This process was difficult for a variety of reasons. First, the website was created in Germany, meaning all of the tags and notes inside of the webpage were all in German. This made understanding what was going on a little more difficult. Next, the website did not follow the tightest html standards, and this caused me difficulties in a number of situations. Finally, since Germany uses commas to delimit decimals, and periods to show value in large numbers, it took some time to reformat this data to be used appropriately.
+This data was wildly available online for me to use, however, it was difficult to find any in csv, api or more manageable form. I had to scrape the information from transfermarkt.com to get what I needed. This process was difficult for a variety of reasons. First, the website was created in Germany, meaning all of the tags and notes inside of the webpage were all in German. This made understanding of what was going on a little more difficult. Next, the website did not follow the tightest html standards, and this caused me difficulties in several situations. Finally, since Germany uses commas to delimit decimals and periods to show value in large numbers, it took some time to reformat this data to be used appropriately.
 
 A discussion of the process can be found [here](https://ggrahambaker.github.io/blog/2019/06/11/webscraping-transfermarkt). 
 
 
 
 ##  Exploratory Data Analysis
-Once I had put together the data, I wanted to look at some key statistics. I had information from the last 14 premier league seasons, since that was the first year transfermarkt started publishing player values. 
+Once I had put together the data, I wanted to look at some key statistics. I had information from the last 14 premier league seasons since that was the first year transfermarkt started publishing player values. 
 
 
 
 ### Total Points Per Club
 
 <div id="container">
-	<img src="/../img/total_points_per_club.png" alt="drawing" width="80%"/>
+    <img src="/../img/total_points_per_club.png" alt="drawing" width="80%"/>
 </div>
 
-You can see the classic "Top 6", a term of the perennial top 6 finishing teams. This group is composed of Liverpool, Arsenal, Manchester United, Manchester City, Chelsea and Tottenham. These six teams are the highest performing teams, and have not been relegated in the time period I was looking at. Everton is another team that has not been relegated in this time frame, but does not have the same reputation as the "Top 6."  
+You can see the classic "Top 6", a term of the perennial top 6 finishing teams. This group is composed of Liverpool, Arsenal, Manchester United, Manchester City, Chelsea, and Tottenham. These six teams are the highest performing teams, and have not been relegated in the period I was looking at. Everton is another team that has not been relegated in this time frame, but does not have the same reputation as the "Top 6."  
 
 
 
@@ -34,13 +34,13 @@ You can see the classic "Top 6", a term of the perennial top 6 finishing teams. 
 ### Money Spent on Players Per Club
 
 <div id="container">
-	<img src="/../img/total_bought_by_team.png" alt="drawing" width="80%"/>
+    <img src="/../img/total_bought_by_team.png" alt="drawing" width="80%"/>
 </div>
 
 
-I also wanted to see the highest spending clubs during this time frame. I would assume that the clubs that spent the most on players, would have the best team meaning that they would earn the most points over the course of a season. This theory fits with this visualization because the total number of points is similar to top spending clubs. 
+I also wanted to see the highest spending clubs during this time frame. I would assume that the clubs that spent the most on players, would have the best team meaning that they would earn the most points throughout a season. This theory fits with this visualization because the total number of points is similar to top spending clubs. 
 
-Lets take a closer look at this relationship
+Let's take a closer look at this relationship
 
 
 
@@ -48,15 +48,15 @@ Lets take a closer look at this relationship
 ### Bought, Sold and Net
 
 <div id="container">
-	<img src="/../img/jointplot_buy.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_buy.png" alt="drawing" width="80%"/>
 </div>
 
 <div id="container">
-	<img src="/../img/jointplot_sell.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_sell.png" alt="drawing" width="80%"/>
 </div>
 
 <div id="container">
-	<img src="/../img/jointplot_net.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_net.png" alt="drawing" width="80%"/>
 </div>
 
 
@@ -70,27 +70,27 @@ Looking at the comparison between players bought and points, there seems to be l
 
 Attacker Average Value
 <div id="container">
-	<img src="/../img/jointplot_a.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_a.png" alt="drawing" width="80%"/>
 </div>
 
 Midfielder Average Value
 <div id="container">
-	<img src="/../img/jointplot_m.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_m.png" alt="drawing" width="80%"/>
 </div>
 
 Defender Average Value
 <div id="container">
-	<img src="/../img/jointplot_d.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_d.png" alt="drawing" width="80%"/>
 </div>
 
 Goalkeeper Average Value
 <div id="container">
-	<img src="/../img/jointplot_g.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_g.png" alt="drawing" width="80%"/>
 </div>
 
 Total Average Value
 <div id="container">
-	<img src="/../img/jointplot_all.png" alt="drawing" width="80%"/>
+    <img src="/../img/jointplot_all.png" alt="drawing" width="80%"/>
 </div>
 
 The next thing I wanted to look at was the average squad value compared to points earned. There still doesn’t seem like a particularly close relationship between the two sets of values. 
@@ -100,7 +100,7 @@ The next thing I wanted to look at was the average squad value compared to point
 
 # Model Fitting
 
-After exploring the data, I can see that there are some relationships between transfer activity, squad value and points, but nothing extremely strong. I will try to fit a model to this data as well as I can, but there might be some additional data that would be more helpful. 
+After exploring the data, I can see that there are some relationships between transfer activity, squad value, and points, but nothing extremely strong. I will try to fit a model to this data as well as I can, but there might be some additional data that would be more helpful. 
 
 
 ## Random Forest Regressor
