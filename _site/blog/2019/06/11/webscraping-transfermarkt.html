@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+	<html>
+		<head>
+			<title>Web Scraping Transfermarkt</title>
+			<!-- link to main stylesheet -->
+			<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700&display=swap" rel="stylesheet"> 
+			<link rel="stylesheet" type="text/css" href="/css/normalize.css">
+			<link rel="stylesheet" type="text/css" href="/css/main.css">
+		</head>
+		<body>
+			<div id="top">
+				<div >
+					<h1 id="head">graham world</h1>
+				</div>	
+			</div>
+			<nav>	
+	    		<ul>
+	        		<li><a href="/">home</a></li>
+		        	<li><a href="/about">about</a></li>
+	        		<li><a href="/posts">posts</a></li>
+	    		</ul>
+			</nav>
+			<div id="wrap">
+				<div class="container">
+					
+				
+				<h1 class="title">Web Scraping Transfermarkt</h1>
+<p class="meta">11 Jun 2019</p>
+
+<div class="post">
+  <p>I was working on a project that predicted the success of Premier League teams depending on several variables. I figured that transfer statistics would be a good indication of success in the league. Buying expensive players indicates that you are buying good players, which will help a team win more points. To get this information, I wanted to scrape <a href="https://www.transfermarkt.co.uk/">transfermarket</a> for this information.</p>
+
+<h2 id="setting-up-environment">Setting Up Environment</h2>
+
+<p>I used <a href="https://www.crummy.com/software/BeautifulSoup/">Beautiful Soup</a>, a python based web scraping package to crawl through the pages of transfermarkt. I was using a Jupyter notebook because I wanted to convert the dataset into a human-readable csv file once I was finished.</p>
+
+<h2 id="starting">Starting</h2>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+</code></pre></div></div>
+<p>These were the main packages I used during this exercise.</p>
+
+<p>My starting point for the web scraping was going to be the <a href="https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=2018">2018 season homepage</a> where I could get most of the transfer information. I also had to fool transfermarkt into allowing my access by passing in header information that I was coming from a web browser.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">'User-Agent'</span><span class="p">:</span> 
+           <span class="s">'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'</span><span class="p">}</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="s">'https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id=2018'</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+<span class="c">#print(tree)</span>
+<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s">'html.parser'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="pulling-in-data-by-season">Pulling in Data by Season</h2>
+
+<p>Now that I had a beautiful soup object that contained all of the html from the yearly homepage, I need to search for the table containing the information I needed. I wanted to just get the url for each team, so I would be able to use it for future queries.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">build_by_year</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="s">'https://www.transfermarkt.co.uk/premier-league/startseite/wettbewerb/GB1/plus/?saison_id='</span> <span class="o">+</span> <span class="n">year</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s">'html.parser'</span><span class="p">)</span>
+    <span class="n">spending_table</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">"tbody"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">"td.hide-for-pad &gt; a.vereinprofil_tooltip"</span><span class="p">)</span>
+    <span class="n">season</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">temp_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">'FC'</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_name</span><span class="p">)</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'href'</span><span class="p">))</span>
+        <span class="n">season</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">season</span>
+</code></pre></div></div>
+<p>This function took a year, and used to to look up the teams in the particular season. I was able to find the name of the team as well as the link for a teams home page.</p>
+
+<p>With that link, I could query-specific teams transfer history.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_all_transfer_info_year</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
+    <span class="n">date_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'18/19'</span><span class="p">:</span> <span class="s">'2018'</span><span class="p">,</span>
+    <span class="s">'17/18'</span><span class="p">:</span> <span class="s">'2017'</span><span class="p">,</span>
+    <span class="s">'16/17'</span><span class="p">:</span> <span class="s">'2016'</span><span class="p">,</span>
+    <span class="s">'15/16'</span><span class="p">:</span> <span class="s">'2015'</span><span class="p">,</span>
+    <span class="s">'14/15'</span><span class="p">:</span> <span class="s">'2014'</span><span class="p">,</span>
+    <span class="s">'13/14'</span><span class="p">:</span> <span class="s">'2013'</span><span class="p">,</span>
+    <span class="s">'12/13'</span><span class="p">:</span> <span class="s">'2012'</span><span class="p">,</span>
+    <span class="s">'11/12'</span><span class="p">:</span> <span class="s">'2011'</span><span class="p">,</span>
+    <span class="s">'10/11'</span><span class="p">:</span> <span class="s">'2010'</span><span class="p">,</span>
+    <span class="s">'09/10'</span><span class="p">:</span> <span class="s">'2009'</span><span class="p">,</span>
+    <span class="s">'08/09'</span><span class="p">:</span> <span class="s">'2008'</span><span class="p">,</span>
+    <span class="s">'07/08'</span><span class="p">:</span> <span class="s">'2007'</span><span class="p">,</span>
+    <span class="s">'06/07'</span><span class="p">:</span> <span class="s">'2006'</span><span class="p">,</span>
+    <span class="s">'05/06'</span><span class="p">:</span> <span class="s">'2005'</span><span class="p">,</span>
+    <span class="s">'04/05'</span><span class="p">:</span> <span class="s">'2004'</span><span class="p">}</span>
+    <span class="n">year_to_ret</span> <span class="o">=</span> <span class="s">''</span>
+    <span class="k">for</span> <span class="n">dash</span><span class="p">,</span> <span class="n">whole</span> <span class="ow">in</span> <span class="n">date_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">year</span> <span class="o">==</span> <span class="n">whole</span><span class="p">:</span>
+            <span class="n">year_to_ret</span> <span class="o">=</span> <span class="n">dash</span>
+    <span class="n">fixed_url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"startseite"</span><span class="p">,</span> <span class="s">"alletransfers"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">full_url</span> <span class="o">=</span> <span class="s">'https://www.transfermarkt.co.uk/'</span> <span class="o">+</span> <span class="n">fixed_url</span> 
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">full_url</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s">'html.parser'</span><span class="p">)</span>
+    <span class="n">incoming</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">"td.redtext"</span><span class="p">)</span>
+    <span class="n">in_and_out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">spent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">incoming</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">incoming</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'class'</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s">'box'</span><span class="p">]:</span>
+                <span class="n">split</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'Arrivals'</span> <span class="ow">and</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">year_to_ret</span><span class="p">:</span>
+                    <span class="n">in_and_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">spent</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s">''</span><span class="p">]</span>
+                    <span class="k">break</span>
+            
+        <span class="c"># if we got here, we didnt find it!</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">in_and_out</span><span class="p">):</span>
+        <span class="n">in_and_out</span> <span class="o">=</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">''</span><span class="p">]</span>
+    <span class="n">outgoing</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">"td.greentext"</span><span class="p">)</span>    
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sale</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">outgoing</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">outgoing</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'class'</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s">'box'</span><span class="p">]:</span>
+                <span class="n">split</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">'Departures'</span> <span class="ow">and</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">year_to_ret</span><span class="p">:</span>
+                    <span class="n">in_and_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sale</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="k">if</span> <span class="n">in_and_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">''</span><span class="p">:</span>
+        <span class="n">in_and_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="s">'0'</span>
+    <span class="k">return</span> <span class="n">in_and_out</span>
+</code></pre></div></div>
+
+<p>This function went through all the years of a particular clubs transfer history and got how much the team spent and sold per year. I had to replace some of the url to get the appropriate location of the transfer information. One difficulty pulling this information in was that if a team sold or spent nothing, the information was the opposite color that you would expect. So I needed to just go year by year, asking for the specific year in the table, and getting both spent and sold values. This approach takes significantly more time than just getting all the team’s transfer history in one url request, but since the data set was only for about 15 years, this wasn’t very expensive in my case. Once I had this information, I wanted to combine it with the point table at the end of the season.</p>
+
+<h1 id="combining-tables">Combining Tables</h1>
+
+<p>I had gotten the season tables for each year from a different source, so, unfortunately, the team names were slightly different from one another. For example, I could have Brighton and Hove Albion, Brighton &amp; Hove Albion, or simply Brighton. This made matching team names together impossible just using string equality. I turned to a python package called <a href="https://github.com/seatgeek/fuzzywuzzy">fuzzywuzzy</a>. This package takes two string together and gives a similarity score out of 100. Since I knew all the possible names, I created a list of names I wanted to use for each club and matched them against the incompatible team names from Transfermarkt and my season tables.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">team_lookup</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">team_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">'bournemouth'</span><span class="p">,</span>
+        <span class="s">'arsenal'</span><span class="p">,</span> 
+        <span class="s">'aston villa'</span><span class="p">,</span> 
+        <span class="s">'birmingham city'</span><span class="p">,</span> 
+        <span class="s">'blackburn rovers'</span><span class="p">,</span>
+        <span class="s">'blackpool'</span><span class="p">,</span>
+        <span class="s">'bolton wanderers'</span><span class="p">,</span> 
+        <span class="s">'brighton hove albion'</span><span class="p">,</span> 
+        <span class="s">'burnley'</span><span class="p">,</span> 
+        <span class="s">'cardiff city'</span><span class="p">,</span> 
+        <span class="s">'charlton athletic'</span><span class="p">,</span> 
+        <span class="s">'chelsea'</span><span class="p">,</span> 
+        <span class="s">'crystal palace'</span><span class="p">,</span> 
+        <span class="s">'derby county'</span><span class="p">,</span> 
+        <span class="s">'everton'</span><span class="p">,</span> 
+        <span class="s">'fulham'</span><span class="p">,</span> 
+        <span class="s">'huddersfield town'</span><span class="p">,</span>
+        <span class="s">'hull city'</span><span class="p">,</span>
+        <span class="s">'leicester city'</span><span class="p">,</span> 
+        <span class="s">'liverpool'</span><span class="p">,</span> 
+        <span class="s">'manchester city'</span><span class="p">,</span> 
+        <span class="s">'manchester united'</span><span class="p">,</span> 
+        <span class="s">'middlesbrough'</span><span class="p">,</span> 
+        <span class="s">'newcastle united'</span><span class="p">,</span> 
+        <span class="s">'norwich city'</span><span class="p">,</span> 
+        <span class="s">'portsmouth'</span><span class="p">,</span> 
+        <span class="s">'queens park rangers'</span><span class="p">,</span> 
+        <span class="s">'reading'</span><span class="p">,</span> 
+        <span class="s">'sheffield united'</span><span class="p">,</span> 
+        <span class="s">'southampton'</span><span class="p">,</span> 
+        <span class="s">'stoke city'</span><span class="p">,</span> 
+        <span class="s">'sunderland'</span><span class="p">,</span>
+        <span class="s">'swansea city'</span><span class="p">,</span>
+        <span class="s">'tottenham hotspur'</span><span class="p">,</span> 
+        <span class="s">'watford'</span><span class="p">,</span> 
+        <span class="s">'west bromwich albion'</span><span class="p">,</span> 
+        <span class="s">'west ham united'</span><span class="p">,</span> 
+        <span class="s">'wigan athletic'</span><span class="p">,</span> 
+        <span class="s">'wolverhampton wanderers'</span>
+    <span class="p">]</span>
+    <span class="n">max_score</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">name_to_ret</span> <span class="o">=</span> <span class="s">''</span>
+    <span class="k">for</span> <span class="n">team</span> <span class="ow">in</span> <span class="n">team_list</span><span class="p">:</span>
+        <span class="n">temp_score</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">team</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temp_score</span> <span class="o">&gt;</span> <span class="n">max_score</span><span class="p">:</span>
+            <span class="n">max_score</span> <span class="o">=</span> <span class="n">temp_score</span>
+            <span class="n">name_to_ret</span> <span class="o">=</span> <span class="n">team</span>
+        
+    <span class="k">return</span> <span class="n">name_to_ret</span>
+</code></pre></div></div>
+
+<p>Using this function, I was able to combine all of the relevant data together into one pandas dataframe object. You can find the full table of data that I put together <a href="https://www.kaggle.com/grahamcrbaker/premier-league-player-values">here</a>. Let me know what you think!</p>
+
+
+</div>
+				
+				</div><!-- /.container -->	
+			</div>
+			
+			<footer>
+	    		<ul>
+	        		<li><a href="mailto:graham.cr.baker@gmail.com">email</a></li>
+	        		
+				</ul>
+			</footer>
+		</body>
+	</html>

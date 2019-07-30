@@ -3,37 +3,46 @@
 		<head>
 			<title>Graham Baker</title>
 			<!-- link to main stylesheet -->
+			<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700&display=swap" rel="stylesheet"> 
+			<link rel="stylesheet" type="text/css" href="/css/normalize.css">
 			<link rel="stylesheet" type="text/css" href="/css/main.css">
 		</head>
 		<body>
-			<nav>
+			<div id="top">
+				<div >
+					<h1 id="head">graham world</h1>
+				</div>	
+			</div>
+			<nav>	
 	    		<ul>
 	        		<li><a href="/">home</a></li>
 		        	<li><a href="/about">about</a></li>
 	        		<li><a href="/posts">posts</a></li>
 	    		</ul>
 			</nav>
-			<div class="container">
-			
-			<div class="blurb">
-	<p>graham world</p>
+			<div id="wrap">
+				<div class="container">
+					
+				
+				<div class="blurb">
 	<img id="imageid" src="img/buddy.gif">
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 			  integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
-			  crossorigin="anonymous">
-			  	
-			  	$(document).ready(function() { 
-			  		
+			  crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		$(document).ready(function() { 
 			  		var pos = $("#imageid").position(); // returns an object with 
 					var width = $('#imageid').width();
 					var height = $('#imageid').height();
 
 			  	});
-			  </script>
+	</script>
 	
 </div><!-- /.blurb -->
+				
+				</div><!-- /.container -->	
+			</div>
 			
-			</div><!-- /.container -->
 			<footer>
 	    		<ul>
 	        		<li><a href="mailto:graham.cr.baker@gmail.com">email</a></li>
