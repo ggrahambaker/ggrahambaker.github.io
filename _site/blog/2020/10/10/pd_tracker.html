@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 	<html>
 		<head>
-			<title>Pd_tracker</title>
+			<title>PD Tracker</title>
 			<!-- link to main stylesheet -->
 			<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:700&display=swap" rel="stylesheet"> 
 			<link rel="stylesheet" type="text/css" href="/css/normalize.css">
@@ -24,11 +24,33 @@
 				<div class="container">
 					
 				
-				<h1 class="title">Pd_tracker</h1>
+				<h1 class="title">PD Tracker</h1>
 <p class="meta">10 Oct 2020</p>
 
 <div class="post">
-  
+  <h1 id="pd-tracker"><a href="https://pd-tracker1.herokuapp.com/">PD Tracker</a></h1>
+<p><a href="https://github.com/ggrahambaker/product_tracker">github</a></p>
+<h1 id="what-is-this-thing">What is this thing?</h1>
+
+<p>I wanted to learn more about flask as well as the ecosystem that surrounds the python web development world, so I decided to make an app that would introduce and solidify my understanding. The goal of the project was to create a “product tracker”, or essentially a platform for people to discuss and present research regarding a paticular product. Originally, the idea was for specifically finacial instuments like stocks, bonds or anything else you can invest in, but potentially can be used for anything! It is intended for a closed group of users, where an instance of the application is only available to a select few instead of the internet at large. I opted to use heroku to host the site, leveraging a bunch of the easy to use plugins to add all the functionality I wanted.</p>
+
+<h1 id="what-were-the-requirements">What were the Requirements?</h1>
+
+<h3 id="user-authentication">User Authentication</h3>
+<p>A basic requirement but a good way to flex some of those authentication muscles. Flask has a bunch of handy user authentication tracking add ons, but I used <a href="https://flask-login.readthedocs.io/en/latest/">Flask-Login</a>. Most of the site is behind a user authentication check, so if you actually want see what kind of stuff it does, make sure you make an account. I added password recovory and some other convienice functions.</p>
+
+<h3 id="posting-assets">Posting Assets</h3>
+<p>I wanted users to be able to create an asset easily with a name, a short description, as well as be able to upload relevant documents. I used the Amazon S3 service to host the uploaded docuements.</p>
+
+<h3 id="searching">Searching</h3>
+<p>The ability to search for assets is crucial for this type of application. While a user can just scroll through all of the assets on their home page, its a lot easier just to be able to quickly get results from the search bar. I used elasticsearch to add this functionality to the site.</p>
+
+<h3 id="future-features">Future Features</h3>
+<p>I would like to add an export asset feature, where a user can get the asset discussion including the description, attached documents, as well as the comments from other users sent to eamil.</p>
+
+<h1 id="acknowledgments">Acknowledgments</h1>
+
+<p>I based this project off the wonderful series created by Miguel Grinberg that you can find <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world">here</a>.</p>
 
 </div>
 				
